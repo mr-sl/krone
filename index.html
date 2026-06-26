@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Krone</title>
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Krone">
+<meta name="theme-color" content="#0d2b4a">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+
+<style>
+  :root {
+    --fjord:    #0d2b4a;
+    --fjord-2:  #143a61;
+    --water:    #2f6f9e;
+    --ice:      #d9e8f2;
+    --snow:     #f4f8fb;
+    --text:     #0d2b4a;
+    --text-dim: #5e7589;
+    --line:     #c7d8e6;
+    --live:     #1f8a5b;
+    --offline:  #b5791a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--fjord);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    min-height: 100dvh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    overflow: hidden;
+  }
+
+  /* ---- header ---- */
+  header {
+    color: var(--snow);
+    padding: 1.6rem 1.5rem 1.4rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  header .title {
+    font-size: 1.55rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  header .sub {
+    font-size: 0.8rem;
+    color: var(--ice);
+    opacity: 0.75;
+    margin-top: 2px;
+    font-weight: 400;
+  }
+  #refresh {
+    background: rgba(255,255,255,0.12);
+    border: none;
+    color: var(--snow);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.4s;
+  }
+  #refresh:active { background: rgba(255,255,255,0.25); }
+  #refresh.spin svg { animation: spin 0.7s ease; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---- main card sheet ---- */
+  main {
+    background: var(--snow);
+    border-radius: 28px 28px 0 0;
+    flex: 1;
+    padding: 1.6rem 1.4rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    box-shadow: 0 -8px 30px rgba(0,0,0,0.15);
+  }
+
+  .field {
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: 18px;
+    padding: 0.9rem 1.1rem;
+    transition: border-color 0.15s;
+  }
+  .field:focus-within { border-color: var(--water); }
+  .field label {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-weight: 500;
+    margin-bottom: 0.35rem;
+    letter-spacing: 0.01em;
+  }
+  .field .row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .field .sym {
+    font-size: 1.7rem;
+    color: var(--water);
+    font-weight: 500;
+    min-width: 1.6rem;
+  }
+  .field input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text);
+    background: transparent;
+    width: 100%;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .field input::placeholder { color: var(--line); }
+
+  .swap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: -0.45rem 0;
+    position: relative;
+    z-index: 2;
+  }
+  .swap button {
+    background: var(--ice);
+    border: 3px solid var(--snow);
+    color: var(--fjord);
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.15s;
+  }
+  .swap button:active { transform: rotate(180deg); background: #c3dcec; }
+
+  /* ---- rate line ---- */
+  .rate {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.2rem 0.4rem;
+    font-size: 0.85rem;
+  }
+  .rate .val { color: var(--text-dim); font-weight: 500; }
+  .rate .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 500;
+    font-size: 0.8rem;
+  }
+  .rate .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    display: inline-block;
+  }
+  .status.live    { color: var(--live); }
+  .status.live .dot    { background: var(--live); }
+  .status.offline { color: var(--offline); }
+  .status.offline .dot { background: var(--offline); }
+  .status.loading { color: var(--text-dim); }
+  .status.loading .dot { background: var(--text-dim); animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity: 0.3; } }
+
+  /* ---- quick chips ---- */
+  .chips {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    margin-top: auto;
+  }
+  .chips button {
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 0.7rem 0;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--fjord);
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .chips button:active { background: var(--ice); border-color: var(--water); }
+
+  .tip {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    margin-top: 0.3rem;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="title">Krone</div>
+    <div class="sub">EUR &harr; NOK Rechner</div>
+  </div>
+  <button id="refresh" aria-label="Kurs aktualisieren">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+  </button>
+</header>
+
+<main>
+  <div class="field">
+    <label for="eur">Euro</label>
+    <div class="row">
+      <span class="sym">&euro;</span>
+      <input id="eur" type="text" inputmode="decimal" value="100" placeholder="0">
+    </div>
+  </div>
+
+  <div class="swap">
+    <button id="swap" aria-label="Richtung tauschen">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M7 4l-3 3M7 4l3 3"/><path d="M17 20V4M17 20l-3-3M17 20l3-3"/></svg>
+    </button>
+  </div>
+
+  <div class="field">
+    <label for="nok">Norwegische Krone</label>
+    <div class="row">
+      <span class="sym">kr</span>
+      <input id="nok" type="text" inputmode="decimal" value="1080" placeholder="0">
+    </div>
+  </div>
+
+  <div class="rate">
+    <span class="val" id="rateLine">1 &euro; = &hellip; kr</span>
+    <span class="status loading" id="status"><span class="dot"></span><span id="statusText">l&auml;dt&hellip;</span></span>
+  </div>
+
+  <div class="chips">
+    <button data-eur="10">10 &euro;</button>
+    <button data-eur="50">50 &euro;</button>
+    <button data-eur="100">100 &euro;</button>
+    <button data-nok="200">200 kr</button>
+  </div>
+
+  <p class="tip">Marktkurs &ndash; an Karte/Automat kommen meist 1&ndash;3&nbsp;% Aufschlag dazu.</p>
+</main>
+
+<script>
+(function(){
+  var FALLBACK = 10.80;
+  var RATE_KEY = 'nok_rate';
+  var DATE_KEY = 'nok_rate_date';
+
+  var rate = parseFloat(localStorage.getItem(RATE_KEY)) || FALLBACK;
+  var lastDir = 'eur';
+
+  var eur = document.getElementById('eur');
+  var nok = document.getElementById('nok');
+  var rateLine = document.getElementById('rateLine');
+  var statusEl = document.getElementById('status');
+  var statusText = document.getElementById('statusText');
+  var refreshBtn = document.getElementById('refresh');
+  var swapBtn = document.getElementById('swap');
+
+  function r2(n){ return Math.round(n*100)/100; }
+  function fmt(n){
+    return r2(n).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+  function parse(v){
+    if(!v) return NaN;
+    return parseFloat(String(v).replace(/\s/g,'').replace(',','.'));
+  }
+
+  function fromEur(){
+    lastDir = 'eur';
+    var v = parse(eur.value);
+    if(isNaN(v)){ nok.value=''; return; }
+    nok.value = fmt(v*rate);
+  }
+  function fromNok(){
+    lastDir = 'nok';
+    var v = parse(nok.value);
+    if(isNaN(v)){ eur.value=''; return; }
+    eur.value = fmt(v/rate);
+  }
+  function recompute(){ lastDir==='eur' ? fromEur() : fromNok(); }
+
+  eur.addEventListener('input', fromEur);
+  nok.addEventListener('input', fromNok);
+
+  // select all on focus for quick overwrite
+  [eur,nok].forEach(function(el){
+    el.addEventListener('focus', function(){ setTimeout(function(){ el.select(); },10); });
+  });
+
+  document.querySelectorAll('.chips button').forEach(function(b){
+    b.addEventListener('click', function(){
+      if(b.dataset.eur){ eur.value=b.dataset.eur; fromEur(); }
+      else { nok.value=b.dataset.nok; fromNok(); }
+    });
+  });
+
+  swapBtn.addEventListener('click', function(){
+    var e = parse(eur.value), n = parse(nok.value);
+    eur.value = isNaN(n)? '' : fmt(n);
+    nok.value = isNaN(e)? '' : fmt(e);
+    lastDir = lastDir==='eur' ? 'nok' : 'eur';
+  });
+
+  function setStatus(cls, text){
+    statusEl.className = 'status ' + cls;
+    statusText.textContent = text;
+  }
+
+  function applyRate(newRate, live){
+    rate = newRate;
+    rateLine.innerHTML = '1 &euro; = ' + fmt(rate) + ' kr';
+    recompute();
+    if(live){
+      localStorage.setItem(RATE_KEY, rate);
+      localStorage.setItem(DATE_KEY, new Date().toISOString());
+      setStatus('live','Live-Kurs');
+    } else {
+      var d = localStorage.getItem(DATE_KEY);
+      if(d){
+        var day = new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});
+        setStatus('offline','Kurs vom '+day);
+      } else {
+        setStatus('offline','Offline-Kurs');
+      }
+    }
+  }
+
+  function fetchRate(){
+    setStatus('loading','l\u00e4dt\u2026');
+    refreshBtn.classList.add('spin');
+    setTimeout(function(){ refreshBtn.classList.remove('spin'); }, 700);
+
+    fetch('https://api.frankfurter.app/latest?from=EUR&to=NOK')
+      .then(function(res){ if(!res.ok) throw 0; return res.json(); })
+      .then(function(data){
+        if(data && data.rates && data.rates.NOK) applyRate(data.rates.NOK, true);
+        else throw 0;
+      })
+      .catch(function(){ applyRate(rate, false); });
+  }
+
+  refreshBtn.addEventListener('click', fetchRate);
+
+  // initial: show stored rate immediately, then try live
+  applyRate(rate, false);
+  fetchRate();
+
+  // register service worker for offline use
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  }
+})();
+</script>
+</body>
+</html>

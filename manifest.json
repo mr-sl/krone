@@ -1,0 +1,15 @@
+{
+  "name": "Krone – EUR/NOK Rechner",
+  "short_name": "Krone",
+  "description": "Schneller Währungsrechner zwischen Euro und norwegischer Krone mit Live-Kurs und Offline-Funktion.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d2b4a",
+  "theme_color": "#0d2b4a",
+  "icons": [
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
