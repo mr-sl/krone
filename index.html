@@ -42,7 +42,6 @@
     overflow: hidden;
   }
 
-  /* ---- header ---- */
   header {
     color: var(--snow);
     padding: 1.6rem 1.5rem 1.4rem;
@@ -50,44 +49,31 @@
     align-items: flex-end;
     justify-content: space-between;
   }
-  header .title {
-    font-size: 1.55rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-  header .sub {
-    font-size: 0.8rem;
-    color: var(--ice);
-    opacity: 0.75;
-    margin-top: 2px;
-    font-weight: 400;
-  }
-  #refresh {
+  header .title { font-size: 1.55rem; font-weight: 600; letter-spacing: -0.02em; }
+  header .sub { font-size: 0.8rem; color: var(--ice); opacity: 0.75; margin-top: 2px; font-weight: 400; }
+  header .actions { display: flex; gap: 0.6rem; }
+
+  .icon-btn {
     background: rgba(255,255,255,0.12);
     border: none;
     color: var(--snow);
     width: 44px; height: 44px;
     border-radius: 50%;
     font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     transition: background 0.15s, transform 0.4s;
   }
-  #refresh:active { background: rgba(255,255,255,0.25); }
+  .icon-btn:active { background: rgba(255,255,255,0.25); }
   #refresh.spin svg { animation: spin 0.7s ease; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ---- main card sheet ---- */
   main {
     background: var(--snow);
     border-radius: 28px 28px 0 0;
     flex: 1;
     padding: 1.6rem 1.4rem 1.4rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.9rem;
+    display: flex; flex-direction: column; gap: 0.9rem;
     box-shadow: 0 -8px 30px rgba(0,0,0,0.15);
   }
 
@@ -97,117 +83,145 @@
     border-radius: 18px;
     padding: 0.9rem 1.1rem;
     transition: border-color 0.15s;
+    position: relative;
   }
   .field:focus-within { border-color: var(--water); }
+  .field.flash { animation: flash 0.9s ease; }
+  @keyframes flash {
+    0%   { border-color: var(--water); box-shadow: 0 0 0 0 rgba(47,111,158,0.35); }
+    100% { border-color: var(--line);  box-shadow: 0 0 0 12px rgba(47,111,158,0); }
+  }
   .field label {
-    display: block;
-    font-size: 0.78rem;
-    color: var(--text-dim);
-    font-weight: 500;
-    margin-bottom: 0.35rem;
-    letter-spacing: 0.01em;
+    display: block; font-size: 0.78rem; color: var(--text-dim);
+    font-weight: 500; margin-bottom: 0.35rem; letter-spacing: 0.01em;
   }
-  .field .row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .field .sym {
-    font-size: 1.7rem;
-    color: var(--water);
-    font-weight: 500;
-    min-width: 1.6rem;
-  }
+  .field .row { display: flex; align-items: center; gap: 0.5rem; }
+  .field .sym { font-size: 1.7rem; color: var(--water); font-weight: 500; min-width: 1.6rem; }
   .field input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 2rem;
-    font-weight: 600;
-    color: var(--text);
-    background: transparent;
-    width: 100%;
-    letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
+    flex: 1; border: none; outline: none;
+    font-size: 2rem; font-weight: 600; color: var(--text);
+    background: transparent; width: 100%;
+    letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
   }
   .field input::placeholder { color: var(--line); }
 
-  .swap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: -0.45rem 0;
-    position: relative;
-    z-index: 2;
-  }
+  .swap { display: flex; align-items: center; justify-content: center; margin: -0.45rem 0; position: relative; z-index: 2; }
   .swap button {
-    background: var(--ice);
-    border: 3px solid var(--snow);
-    color: var(--fjord);
-    width: 46px; height: 46px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.2s, background 0.15s;
+    background: var(--ice); border: 3px solid var(--snow); color: var(--fjord);
+    width: 46px; height: 46px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform 0.2s, background 0.15s;
   }
   .swap button:active { transform: rotate(180deg); background: #c3dcec; }
 
-  /* ---- rate line ---- */
-  .rate {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.2rem 0.4rem;
-    font-size: 0.85rem;
-  }
+  .rate { display: flex; align-items: center; justify-content: space-between; padding: 0.2rem 0.4rem; font-size: 0.85rem; }
   .rate .val { color: var(--text-dim); font-weight: 500; }
-  .rate .status {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-weight: 500;
-    font-size: 0.8rem;
-  }
-  .rate .dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    display: inline-block;
-  }
-  .status.live    { color: var(--live); }
-  .status.live .dot    { background: var(--live); }
+  .rate .status { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 500; font-size: 0.8rem; }
+  .rate .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .status.live { color: var(--live); }
+  .status.live .dot { background: var(--live); }
   .status.offline { color: var(--offline); }
   .status.offline .dot { background: var(--offline); }
   .status.loading { color: var(--text-dim); }
   .status.loading .dot { background: var(--text-dim); animation: pulse 1s infinite; }
   @keyframes pulse { 50% { opacity: 0.3; } }
 
-  /* ---- quick chips ---- */
-  .chips {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
-    margin-top: auto;
+  .scan-cta {
+    display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+    background: var(--fjord); color: var(--snow);
+    border: none; border-radius: 16px; padding: 0.95rem 0;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
   }
+  .scan-cta:active { background: var(--fjord-2); transform: scale(0.99); }
+  .scan-cta svg { flex: none; }
+
+  .chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: auto; }
   .chips button {
-    background: #fff;
-    border: 1.5px solid var(--line);
-    border-radius: 14px;
-    padding: 0.7rem 0;
-    font-size: 0.92rem;
-    font-weight: 600;
-    color: var(--fjord);
-    cursor: pointer;
-    transition: background 0.12s, border-color 0.12s;
+    background: #fff; border: 1.5px solid var(--line); border-radius: 14px;
+    padding: 0.7rem 0; font-size: 0.92rem; font-weight: 600; color: var(--fjord);
+    cursor: pointer; transition: background 0.12s, border-color 0.12s;
   }
   .chips button:active { background: var(--ice); border-color: var(--water); }
 
-  .tip {
-    text-align: center;
-    font-size: 0.72rem;
-    color: var(--text-dim);
-    margin-top: 0.3rem;
-    line-height: 1.5;
+  .tip { text-align: center; font-size: 0.72rem; color: var(--text-dim); margin-top: 0.3rem; line-height: 1.5; }
+
+  /* ---- camera overlay ---- */
+  .cam { position: fixed; inset: 0; background: #000; z-index: 100; display: none; flex-direction: column; }
+  .cam.open { display: flex; }
+  .cam video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .cam canvas { display: none; }
+
+  .cam-top {
+    position: relative; z-index: 3;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: calc(env(safe-area-inset-top) + 0.8rem) 1.2rem 0.8rem;
+    color: #fff;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0));
+  }
+  .cam-top .label { font-size: 0.95rem; font-weight: 600; }
+  .cam-close {
+    background: rgba(0,0,0,0.4); border: none; color: #fff;
+    width: 40px; height: 40px; border-radius: 50%;
+    font-size: 1.4rem; line-height: 1; cursor: pointer;
+  }
+
+  .cam-frame {
+    position: absolute; z-index: 2;
+    left: 8%; right: 8%; top: 50%; transform: translateY(-50%);
+    height: 26%;
+    border: 2px solid rgba(255,255,255,0.9); border-radius: 14px;
+    box-shadow: 0 0 0 100vmax rgba(0,0,0,0.45);
+  }
+  .cam-frame::after {
+    content: "Preisschild in den Rahmen";
+    position: absolute; bottom: -2rem; left: 0; right: 0;
+    text-align: center; color: rgba(255,255,255,0.85);
+    font-size: 0.82rem; font-weight: 500;
+  }
+
+  .cam-bottom {
+    position: absolute; z-index: 3; bottom: 0; left: 0; right: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 0.8rem;
+    padding: 1rem 1rem calc(env(safe-area-inset-bottom) + 1.6rem);
+    background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0));
+  }
+  .shutter {
+    width: 74px; height: 74px; border-radius: 50%;
+    background: #fff; border: 4px solid rgba(255,255,255,0.5);
+    cursor: pointer; transition: transform 0.1s;
+  }
+  .shutter:active { transform: scale(0.92); }
+  .shutter:disabled { opacity: 0.4; cursor: default; }
+
+  .cam-hint { color: rgba(255,255,255,0.85); font-size: 0.82rem; min-height: 1.1rem; text-align: center; font-weight: 500; }
+
+  .cam-busy {
+    position: absolute; z-index: 4; inset: 0;
+    display: none; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;
+    background: rgba(0,0,0,0.55); color: #fff;
+  }
+  .cam-busy.show { display: flex; }
+  .cam-busy .ring {
+    width: 46px; height: 46px;
+    border: 4px solid rgba(255,255,255,0.25); border-top-color: #fff;
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+  .cam-busy .txt { font-size: 0.9rem; font-weight: 500; }
+
+  .cam-error {
+    position: absolute; z-index: 5; inset: 0;
+    display: none; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem;
+    padding: 2rem; text-align: center;
+    background: var(--fjord); color: var(--snow);
+  }
+  .cam-error.show { display: flex; }
+  .cam-error h3 { font-size: 1.1rem; font-weight: 600; }
+  .cam-error p { font-size: 0.9rem; color: var(--ice); line-height: 1.5; }
+  .cam-error button {
+    margin-top: 0.5rem; background: var(--snow); color: var(--fjord);
+    border: none; border-radius: 12px; padding: 0.7rem 1.4rem;
+    font-weight: 600; font-size: 0.95rem; cursor: pointer;
   }
 </style>
 </head>
@@ -218,13 +232,18 @@
     <div class="title">Krone</div>
     <div class="sub">EUR &harr; NOK Rechner</div>
   </div>
-  <button id="refresh" aria-label="Kurs aktualisieren">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
-  </button>
+  <div class="actions">
+    <button id="scan" class="icon-btn" aria-label="Preis scannen">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    </button>
+    <button id="refresh" class="icon-btn" aria-label="Kurs aktualisieren">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+    </button>
+  </div>
 </header>
 
 <main>
-  <div class="field">
+  <div class="field" id="eurField">
     <label for="eur">Euro</label>
     <div class="row">
       <span class="sym">&euro;</span>
@@ -238,7 +257,7 @@
     </button>
   </div>
 
-  <div class="field">
+  <div class="field" id="nokField">
     <label for="nok">Norwegische Krone</label>
     <div class="row">
       <span class="sym">kr</span>
@@ -251,6 +270,11 @@
     <span class="status loading" id="status"><span class="dot"></span><span id="statusText">l&auml;dt&hellip;</span></span>
   </div>
 
+  <button class="scan-cta" id="scanCta">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    Preis scannen
+  </button>
+
   <div class="chips">
     <button data-eur="10">10 &euro;</button>
     <button data-eur="50">50 &euro;</button>
@@ -260,6 +284,34 @@
 
   <p class="tip">Marktkurs &ndash; an Karte/Automat kommen meist 1&ndash;3&nbsp;% Aufschlag dazu.</p>
 </main>
+
+<div class="cam" id="cam">
+  <video id="camVideo" playsinline muted autoplay></video>
+  <canvas id="camCanvas"></canvas>
+
+  <div class="cam-top">
+    <span class="label">Preis scannen</span>
+    <button class="cam-close" id="camClose" aria-label="Schlie&szlig;en">&times;</button>
+  </div>
+
+  <div class="cam-frame"></div>
+
+  <div class="cam-bottom">
+    <div class="cam-hint" id="camHint">Zahl mittig in den Rahmen halten</div>
+    <button class="shutter" id="shutter" aria-label="Foto aufnehmen"></button>
+  </div>
+
+  <div class="cam-busy" id="camBusy">
+    <div class="ring"></div>
+    <div class="txt" id="busyTxt">Lese Preis&hellip;</div>
+  </div>
+
+  <div class="cam-error" id="camError">
+    <h3 id="errTitle">Kamera nicht verf&uuml;gbar</h3>
+    <p id="errMsg">Bitte erlaube den Kamerazugriff in den Einstellungen.</p>
+    <button id="errClose">Zur&uuml;ck</button>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -272,6 +324,8 @@
 
   var eur = document.getElementById('eur');
   var nok = document.getElementById('nok');
+  var eurField = document.getElementById('eurField');
+  var nokField = document.getElementById('nokField');
   var rateLine = document.getElementById('rateLine');
   var statusEl = document.getElementById('status');
   var statusText = document.getElementById('statusText');
@@ -279,35 +333,17 @@
   var swapBtn = document.getElementById('swap');
 
   function r2(n){ return Math.round(n*100)/100; }
-  function fmt(n){
-    return r2(n).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
-  }
-  function parse(v){
-    if(!v) return NaN;
-    return parseFloat(String(v).replace(/\s/g,'').replace(',','.'));
-  }
+  function fmt(n){ return r2(n).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function parse(v){ if(!v) return NaN; return parseFloat(String(v).replace(/\s/g,'').replace(',','.')); }
 
-  function fromEur(){
-    lastDir = 'eur';
-    var v = parse(eur.value);
-    if(isNaN(v)){ nok.value=''; return; }
-    nok.value = fmt(v*rate);
-  }
-  function fromNok(){
-    lastDir = 'nok';
-    var v = parse(nok.value);
-    if(isNaN(v)){ eur.value=''; return; }
-    eur.value = fmt(v/rate);
-  }
+  function fromEur(){ lastDir='eur'; var v=parse(eur.value); if(isNaN(v)){ nok.value=''; return; } nok.value=fmt(v*rate); }
+  function fromNok(){ lastDir='nok'; var v=parse(nok.value); if(isNaN(v)){ eur.value=''; return; } eur.value=fmt(v/rate); }
   function recompute(){ lastDir==='eur' ? fromEur() : fromNok(); }
 
   eur.addEventListener('input', fromEur);
   nok.addEventListener('input', fromNok);
 
-  // select all on focus for quick overwrite
-  [eur,nok].forEach(function(el){
-    el.addEventListener('focus', function(){ setTimeout(function(){ el.select(); },10); });
-  });
+  [eur,nok].forEach(function(el){ el.addEventListener('focus', function(){ setTimeout(function(){ el.select(); },10); }); });
 
   document.querySelectorAll('.chips button').forEach(function(b){
     b.addEventListener('click', function(){
@@ -317,33 +353,28 @@
   });
 
   swapBtn.addEventListener('click', function(){
-    var e = parse(eur.value), n = parse(nok.value);
-    eur.value = isNaN(n)? '' : fmt(n);
-    nok.value = isNaN(e)? '' : fmt(e);
-    lastDir = lastDir==='eur' ? 'nok' : 'eur';
+    var e=parse(eur.value), n=parse(nok.value);
+    eur.value=isNaN(n)?'':fmt(n);
+    nok.value=isNaN(e)?'':fmt(e);
+    lastDir = lastDir==='eur'?'nok':'eur';
   });
 
-  function setStatus(cls, text){
-    statusEl.className = 'status ' + cls;
-    statusText.textContent = text;
-  }
+  function setStatus(cls, text){ statusEl.className='status '+cls; statusText.textContent=text; }
 
   function applyRate(newRate, live){
-    rate = newRate;
-    rateLine.innerHTML = '1 &euro; = ' + fmt(rate) + ' kr';
+    rate=newRate;
+    rateLine.innerHTML='1 &euro; = '+fmt(rate)+' kr';
     recompute();
     if(live){
       localStorage.setItem(RATE_KEY, rate);
       localStorage.setItem(DATE_KEY, new Date().toISOString());
       setStatus('live','Live-Kurs');
     } else {
-      var d = localStorage.getItem(DATE_KEY);
+      var d=localStorage.getItem(DATE_KEY);
       if(d){
-        var day = new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});
+        var day=new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});
         setStatus('offline','Kurs vom '+day);
-      } else {
-        setStatus('offline','Offline-Kurs');
-      }
+      } else { setStatus('offline','Offline-Kurs'); }
     }
   }
 
@@ -351,26 +382,188 @@
     setStatus('loading','l\u00e4dt\u2026');
     refreshBtn.classList.add('spin');
     setTimeout(function(){ refreshBtn.classList.remove('spin'); }, 700);
-
     fetch('https://api.frankfurter.app/latest?from=EUR&to=NOK')
       .then(function(res){ if(!res.ok) throw 0; return res.json(); })
-      .then(function(data){
-        if(data && data.rates && data.rates.NOK) applyRate(data.rates.NOK, true);
-        else throw 0;
-      })
+      .then(function(data){ if(data&&data.rates&&data.rates.NOK) applyRate(data.rates.NOK, true); else throw 0; })
       .catch(function(){ applyRate(rate, false); });
   }
 
   refreshBtn.addEventListener('click', fetchRate);
 
-  // initial: show stored rate immediately, then try live
   applyRate(rate, false);
   fetchRate();
 
-  // register service worker for offline use
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('sw.js').catch(function(){});
+  if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(function(){}); }
+
+  /* ===================== KAMERA-SCAN ===================== */
+  var cam=document.getElementById('cam');
+  var video=document.getElementById('camVideo');
+  var canvas=document.getElementById('camCanvas');
+  var shutter=document.getElementById('shutter');
+  var camClose=document.getElementById('camClose');
+  var camHint=document.getElementById('camHint');
+  var camBusy=document.getElementById('camBusy');
+  var busyTxt=document.getElementById('busyTxt');
+  var camError=document.getElementById('camError');
+  var errTitle=document.getElementById('errTitle');
+  var errMsg=document.getElementById('errMsg');
+  var errClose=document.getElementById('errClose');
+  var scanBtn=document.getElementById('scan');
+  var scanCta=document.getElementById('scanCta');
+
+  var stream=null, worker=null, tessLoading=null;
+
+  function showError(title, msg){ errTitle.textContent=title; errMsg.textContent=msg; camError.classList.add('show'); }
+
+  function openCam(){
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      cam.classList.add('open');
+      showError('Kamera nicht verf\u00fcgbar','Dieses Ger\u00e4t oder der Browser unterst\u00fctzt keinen Kamerazugriff. Tippe die Zahl stattdessen ein.');
+      return;
+    }
+    cam.classList.add('open');
+    camError.classList.remove('show');
+    camBusy.classList.remove('show');
+    camHint.textContent='Zahl mittig in den Rahmen halten';
+    navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' } }, audio:false })
+      .then(function(s){ stream=s; video.srcObject=s; video.play(); })
+      .catch(function(err){
+        var msg='Bitte erlaube den Kamerazugriff, damit Preise gescannt werden k\u00f6nnen.';
+        if(err && err.name==='NotFoundError') msg='Es wurde keine Kamera gefunden.';
+        showError('Kein Kamerazugriff', msg);
+      });
   }
+
+  function closeCam(){
+    cam.classList.remove('open');
+    if(stream){ stream.getTracks().forEach(function(t){ t.stop(); }); stream=null; }
+    video.srcObject=null;
+  }
+
+  scanBtn.addEventListener('click', openCam);
+  scanCta.addEventListener('click', openCam);
+  camClose.addEventListener('click', closeCam);
+  errClose.addEventListener('click', closeCam);
+
+  function ensureTesseract(){
+    if(window.Tesseract) return Promise.resolve();
+    if(tessLoading) return tessLoading;
+    tessLoading=new Promise(function(resolve,reject){
+      var s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+      s.onload=function(){ resolve(); };
+      s.onerror=function(){ tessLoading=null; reject(new Error('load')); };
+      document.head.appendChild(s);
+    });
+    return tessLoading;
+  }
+
+  function getWorker(){
+    if(worker) return Promise.resolve(worker);
+    return Tesseract.createWorker('eng', 1, {
+      workerPath:'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js',
+      corePath:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5',
+      langPath:'https://tessdata.projectnaptha.com/4.0.0'
+    }).then(function(w){
+      return w.setParameters({
+        tessedit_char_whitelist:'0123456789.,kr KR NOK ',
+        tessedit_pageseg_mode:'6'
+      }).then(function(){ worker=w; return w; });
+    });
+  }
+
+  function normaliseNumber(tok){
+    if(!/\d/.test(tok)) return null;
+    tok=tok.replace(/\s/g,'');
+    var lastComma=tok.lastIndexOf(','), lastDot=tok.lastIndexOf('.');
+    var dec=Math.max(lastComma,lastDot);
+    var intPart, fracPart;
+    if(dec===-1){ intPart=tok.replace(/[.,]/g,''); fracPart=''; }
+    else {
+      var after=tok.slice(dec+1).replace(/[.,]/g,'');
+      if(after.length>=1 && after.length<=2){ intPart=tok.slice(0,dec).replace(/[.,]/g,''); fracPart=after; }
+      else { intPart=tok.replace(/[.,]/g,''); fracPart=''; }
+    }
+    if(!intPart) intPart='0';
+    var num=parseFloat(intPart+(fracPart?'.'+fracPart:''));
+    return isNaN(num)?null:num;
+  }
+
+  function extractPrice(text){
+    if(!text) return null;
+    var cleaned=text.replace(/[^\d.,\s]/g,' ');
+    // join thousands written with a space: "1 299" -> "1299" (common on NO tags)
+    cleaned=cleaned.replace(/(\d)\s+(\d{3}\b)/g,'$1$2');
+    var tokens=cleaned.split(/\s+/).filter(Boolean);
+    var cands=[];
+    tokens.forEach(function(tok){
+      tok=tok.replace(/[.,]-$/,'');
+      var norm=normaliseNumber(tok);
+      if(norm===null) return;
+      if(norm>0 && norm<1000000) cands.push(norm);
+    });
+    if(!cands.length) return null;
+    cands.sort(function(a,b){ return b-a; });
+    return cands[0];
+  }
+
+  function captureFrame(){
+    var vw=video.videoWidth, vh=video.videoHeight;
+    if(!vw||!vh) return null;
+    var cw=vw*0.84, ch=vh*0.26, cx=(vw-cw)/2, cy=(vh-ch)/2;
+    var scale=2;
+    canvas.width=cw*scale; canvas.height=ch*scale;
+    var ctx=canvas.getContext('2d');
+    ctx.drawImage(video, cx, cy, cw, ch, 0, 0, canvas.width, canvas.height);
+    var img=ctx.getImageData(0,0,canvas.width,canvas.height);
+    var d=img.data;
+    for(var i=0;i<d.length;i+=4){
+      var g=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
+      g = g<110 ? 0 : (g>150 ? 255 : (g-110)*255/40);
+      d[i]=d[i+1]=d[i+2]=g;
+    }
+    ctx.putImageData(img,0,0);
+    return canvas;
+  }
+
+  function flashField(field){ field.classList.remove('flash'); void field.offsetWidth; field.classList.add('flash'); }
+
+  function takeShot(){
+    shutter.disabled=true;
+    camBusy.classList.add('show');
+    busyTxt.textContent = window.Tesseract ? 'Lese Preis\u2026' : 'Texterkennung wird geladen\u2026';
+    ensureTesseract()
+      .then(getWorker)
+      .then(function(w){
+        busyTxt.textContent='Lese Preis\u2026';
+        var frame=captureFrame();
+        if(!frame) throw new Error('frame');
+        return w.recognize(frame);
+      })
+      .then(function(res){
+        var price=extractPrice(res&&res.data?res.data.text:'');
+        camBusy.classList.remove('show');
+        shutter.disabled=false;
+        if(price===null){ camHint.textContent='Keine Zahl erkannt \u2013 n\u00e4her ran und ruhig halten'; return; }
+        nok.value=fmt(price);
+        fromNok();
+        closeCam();
+        flashField(nokField);
+        eur.blur();
+      })
+      .catch(function(err){
+        camBusy.classList.remove('show');
+        shutter.disabled=false;
+        if(!navigator.onLine && !window.Tesseract){ camHint.textContent='Texterkennung muss einmal online geladen werden'; }
+        else { camHint.textContent='Hat nicht geklappt \u2013 nochmal versuchen'; }
+      });
+  }
+
+  shutter.addEventListener('click', takeShot);
+
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden && cam.classList.contains('open')) closeCam();
+  });
 })();
 </script>
 </body>

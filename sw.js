@@ -1,10 +1,17 @@
-const CACHE = 'krone-v1';
+const CACHE = 'krone-v2';
 const ASSETS = [
   'index.html',
   'manifest.json',
   'icon-180.png',
   'icon-192.png',
   'icon-512.png'
+];
+
+// CDN hosts used by the OCR engine – cached on first use so scanning works offline
+const OCR_HOSTS = [
+  'cdn.jsdelivr.net',
+  'tessdata.projectnaptha.com',
+  'unpkg.com'
 ];
 
 self.addEventListener('install', function(e){
@@ -24,11 +31,36 @@ self.addEventListener('activate', function(e){
   self.clients.claim();
 });
 
+function isOcrAsset(url){
+  for(var i=0;i<OCR_HOSTS.length;i++){
+    if(url.indexOf(OCR_HOSTS[i]) !== -1) return true;
+  }
+  return false;
+}
+
 self.addEventListener('fetch', function(e){
   var url = e.request.url;
 
   // never cache the live exchange-rate API – always go to network
   if(url.indexOf('frankfurter.app') !== -1){
+    return;
+  }
+
+  // OCR engine + language data: cache-first (they're versioned & large).
+  // Once fetched online, scanning keeps working without a connection.
+  if(isOcrAsset(url)){
+    e.respondWith(
+      caches.match(e.request).then(function(hit){
+        if(hit) return hit;
+        return fetch(e.request).then(function(res){
+          if(res && (res.status === 200 || res.type === 'opaque')){
+            var copy = res.clone();
+            caches.open(CACHE).then(function(c){ c.put(e.request, copy); });
+          }
+          return res;
+        });
+      })
+    );
     return;
   }
 
