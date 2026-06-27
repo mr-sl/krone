@@ -489,38 +489,81 @@
     return isNaN(num)?null:num;
   }
 
+  // Score each number-like token and pick the most price-shaped one.
+  // Works from the raw text but rewards typical price patterns instead of
+  // blindly taking the largest number (which is often an article no. or kr/kg).
   function extractPrice(text){
     if(!text) return null;
-    var cleaned=text.replace(/[^\d.,\s]/g,' ');
+
+    var raw = text.replace(/\r/g,'');
     // join thousands written with a space: "1 299" -> "1299" (common on NO tags)
-    cleaned=cleaned.replace(/(\d)\s+(\d{3}\b)/g,'$1$2');
-    var tokens=cleaned.split(/\s+/).filter(Boolean);
-    var cands=[];
-    tokens.forEach(function(tok){
-      tok=tok.replace(/[.,]-$/,'');
-      var norm=normaliseNumber(tok);
-      if(norm===null) return;
-      if(norm>0 && norm<1000000) cands.push(norm);
-    });
-    if(!cands.length) return null;
-    cands.sort(function(a,b){ return b-a; });
-    return cands[0];
+    var norm = raw.replace(/(\d)[ \t]+(\d{3}\b)/g, '$1$2');
+
+    var best = null, bestScore = -Infinity;
+    // token = run of digits with optional , . separators
+    var re = /\d[\d.,]*\d|\d/g;
+    var m;
+    while((m = re.exec(norm)) !== null){
+      var tok = m[0];
+      var start = m.index;
+      var end = re.lastIndex;
+      var before = norm.slice(Math.max(0,start-4), start).toLowerCase();
+      var after  = norm.slice(end, end+4).toLowerCase();
+
+      var val = normaliseNumber(tok);
+      if(val === null || val <= 0 || val >= 1000000) continue;
+
+      var digits = tok.replace(/[^\d]/g,'').length;
+      var score = 0;
+
+      // a "kr" / "NOK" right next to it is the strongest signal
+      if(/kr|nok/.test(before) || /kr|nok|,-/.test(after)) score += 40;
+      // classic price decimals: ",90" ",50" etc.
+      if(/[.,]\d{2}$/.test(tok)) score += 20;
+      if(/,-/.test(after) || /,-/.test(tok)) score += 10;
+      // mild size preference, capped (price is usually the big central number)
+      score += Math.min(val, 9999) / 600;
+      // penalise things that look like article numbers / barcodes
+      if(digits >= 6) score -= 30;
+      if(digits === 5) score -= 8;
+      // a per-unit price ("/kg", "pr kg", "kr/kg") is the unit price, not THE price
+      if(/^[\s\/]*(kg|stk|l|g|liter)/.test(after) || /pr/.test(after)) score -= 22;
+
+      if(score > bestScore){ bestScore = score; best = val; }
+    }
+    return best;
   }
 
   function captureFrame(){
     var vw=video.videoWidth, vh=video.videoHeight;
     if(!vw||!vh) return null;
     var cw=vw*0.84, ch=vh*0.26, cx=(vw-cw)/2, cy=(vh-ch)/2;
-    var scale=2;
+    // upscale x3 for crisper small text
+    var scale=3;
     canvas.width=cw*scale; canvas.height=ch*scale;
     var ctx=canvas.getContext('2d');
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality='high';
     ctx.drawImage(video, cx, cy, cw, ch, 0, 0, canvas.width, canvas.height);
+
     var img=ctx.getImageData(0,0,canvas.width,canvas.height);
-    var d=img.data;
-    for(var i=0;i<d.length;i+=4){
+    var d=img.data, n=d.length;
+
+    // pass 1: convert to grayscale and measure mean brightness
+    var sum=0, count=n/4;
+    for(var i=0;i<n;i+=4){
       var g=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
-      g = g<110 ? 0 : (g>150 ? 255 : (g-110)*255/40);
       d[i]=d[i+1]=d[i+2]=g;
+      sum+=g;
+    }
+    var mean=sum/count;
+
+    // pass 2: adaptive threshold around the actual mean (handles screens & dim shelves).
+    // small bias makes glare-heavy shots lean toward white background.
+    var thresh=mean*0.92;
+    for(var j=0;j<n;j+=4){
+      var v=d[j] < thresh ? 0 : 255;
+      d[j]=d[j+1]=d[j+2]=v;
     }
     ctx.putImageData(img,0,0);
     return canvas;
@@ -549,7 +592,8 @@
         fromNok();
         closeCam();
         flashField(nokField);
-        eur.blur();
+        // focus + select so a misread digit can be overwritten instantly
+        setTimeout(function(){ nok.focus(); nok.select(); }, 350);
       })
       .catch(function(err){
         camBusy.classList.remove('show');
